@@ -243,7 +243,7 @@
     - ID 选择器的权值为 100
     - Class 类选择器的权值为 10
     - HTML 标签选择器的权值为 1
-#### 选择器及出现是版本
+#### 选择器及出现版本
 <table class="dataintable">
 <tbody><tr>
 <th>选择器</th>
