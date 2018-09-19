@@ -561,3 +561,56 @@
 </tr>
 </tbody></table>
 
+### px rem em
+#### px
+px像素（Pixel）。相对长度单位。像素px是相对于显示器屏幕分辨率而言的。
+#### em
+em是相对长度单位。相对于当前对象内文本的字体尺寸。如当前对行内文本的字体尺寸未被人为设置，则相对于浏览器的默认字体尺寸。
+- em的值并不是固定的
+- em会继承父级元素的字体大小
+#### rem
+rem是CSS3新增的一个相对单位（root em，根em）
+Tip dpr => scale
+```
+if (!dpr && !scale) {
+    var isAndroid = win.navigator.appVersion.match(/android/gi);
+    var isIPhone = win.navigator.appVersion.match(/iphone/gi);
+    var devicePixelRatio = win.devicePixelRatio;
+    if (isIPhone) {
+        // iOS下，对于2和3的屏，用2倍的方案，其余的用1倍方案
+        if (devicePixelRatio >= 3 && (!dpr || dpr >= 3)) {                
+            dpr = 3;
+        } else if (devicePixelRatio >= 2 && (!dpr || dpr >= 2)){
+            dpr = 2;
+        } else {
+            dpr = 1;
+        }
+    } else {
+        // 其他设备下，仍旧使用1倍的方案
+        dpr = 1;
+    }
+    scale = 1 / dpr;
+}
+```
+
+
+### Array String API
+#### Array API
+- 修改原数组的方法
+    - pop() 删除最后一个元素
+    - push() 在末尾插入元素
+    - shift() 删除第一个元素
+    - unshift() 在头部插入元素
+    - reverse() 反转数组
+    - splice() 删除数组
+    - sort() 排序
+- 不修改原数组的方法
+    - concat() 连接多个数组，返回一个副本（新数组）
+    - join() 连接数组内如，返回一个字符串
+    - slice() 从某个已有的数组返回选定的元素
+    - toSource() 返回该对象的源代码
+    - toLocaleString() 把数组转换为本地数组，并返回结果
+    - valueOf() 返回数组对象的原始值
+
+#### String API
+- API所有方法都不会修改原字符串
