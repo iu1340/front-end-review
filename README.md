@@ -640,3 +640,29 @@ if (!dpr && !scale) {
 
 #### String API
 - API所有方法都不会修改原字符串
+
+### js基本数据类型与引用类型
+#### 基本数据类型
+- number，string，undefined，null，boolean，symbol
+#### 引用类型
+- object，Array，Function，Dat，RegExp
+#### typeof有几种结果
+- 6种 number，string，undefined，object，function
+
+### 箭头函数和普通函数的区别
+- 箭头函数不能作为构造函数，不能使用new
+- 箭头函数没有自己的this，他的this是捕获上下文的this
+- 箭头函数没有arguments,但是可以使用rest参数
+- 箭头函数通过 call()  或   apply() 方法调用一个函数时，只传入了一个参数，对 this 并没有影响(修改不了this)
+- 箭头函数没有原型属性
+
+### 提到原型属性，引出原型链
+- 每个函数都有自己的显示原型属性 prototype
+- 每个引用类型（函数，数组，对象）都拥有__proto__属性，这个称之为隐式原型。
+- 每个引用类型的隐式原型都指向它的构造函数的显示原型,隐式原型的constructorj就是他的构造函数
+- 显示原型又有隐式原型，以此类推一直到null
+
+![avatar](https://img-blog.csdn.net/2018030222305858)
+
+### 提到原型链，那就说一下继承
+#### 原型继承
