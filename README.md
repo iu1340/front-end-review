@@ -49,6 +49,7 @@
 - 原理：对处理函数进行延时操作，若设定的延时到来之前，再次触发事件，则清除上一次的延时操作定时器，重新定时。
 -  简单实例：<br/>
     ```
+    强制方法
     let timer;
     window.onscroll  = function () {
         if(timer){
@@ -60,6 +61,19 @@
             console.log('滚动条位置：' + scrollTop);
             timer = undefined;
         },200)
+    }
+
+    //轮子
+    function debouncing(fn, delay) {
+        var timer = null;
+        return function () {
+            var context = this;
+            var args = arguments;
+            clearTimeout(timer)
+            timer = setTimeout(function () {
+                fn.apply(context,args)
+            },delay)
+        }
     }
     ```
 
@@ -83,6 +97,18 @@
             timer = setTimeout(function () {
                 throttle()
             }, 50);
+        }
+    }
+    
+    //轮子
+    function throttle(delay, fn) {
+        var last = 0;
+        return function () {
+            var curr = +new Date()
+            if(curr-last>delay){
+            fn.apply(this,arguments)
+            last = curr
+            }
         }
     }
     ```
