@@ -662,7 +662,197 @@ if (!dpr && !scale) {
 - 每个引用类型的隐式原型都指向它的构造函数的显示原型,隐式原型的constructorj就是他的构造函数
 - 显示原型又有隐式原型，以此类推一直到null
 
-![avatar](https://img-blog.csdn.net/2018030222305858)
-
 ### 提到原型链，那就说一下继承
+```
+function Animal(name){
+    this.name = name;
+}
+Animal.eat =fucntion(food){
+    console.log(food);
+}
+```
 #### 原型继承
+```
+function Cat(){
+}
+Cat.prototype = new Animal();
+Cat.protyotype.name = 'cat';
+//　Test Code
+var cat = new Cat();
+console.log(cat.name);
+console.log(cat.eat('fish'));
+```
+
+#### 构造继承
+```
+function Cat(name='Tom'){
+    Animal.call(this);
+    this.name = name;
+}
+// Test Code
+var cat = new Cat();
+console.log(cat.name);
+```
+
+### 组合继承
+```
+function Cat(name='Tom'){
+    Animal.call(this);
+    this.name = name;
+}
+Cat.prototype = new Animal();
+Cat.prototype.constructor = Cat;
+// Test Code
+var cat = new Cat();
+console.log(cat.name);
+
+//优化
+function Cat(name='Tom'){
+    Animal.call(this);
+    this.name = name;
+}
+Cat.prototype = Animal.prototype;
+Cat.prototype.constructor = Cat;
+
+```
+
+### ES6观察者模式,事件绑定，解绑，触发
+```
+class eventObs {
+    constructor(){
+        this.handleFunc={}
+    }
+
+    add(type,func){
+        if(this.handleFunc[type]){
+            if(this.handleFunc[type].indexOf(func)===-1){
+                this.handleFunc[type].push(func);
+            }
+        }else{
+            this.handleFunc[type]=[func];
+        }
+
+    };
+
+    fire(type,func){
+        try{
+
+            if(arguments.length===1) {
+                let target = this.handleFunc[type];
+                let count = target.length;
+                for (var i = 0; i < count; i++) {
+                    target[i]();
+                }
+            }else{
+                let target = this.handleFunc[type];
+                let index=target.indexOf(func);
+                if(index===-1)throw error;
+                func();
+            }
+            return true;
+        }catch (e){
+            console.error('error');
+            return false;
+        }
+    };
+
+    remove(type,func){
+        try{
+            let target = this.handleFunc[type];
+            let index=target.indexOf(func);
+            if(index===-1)throw error;
+            target.splice(index,1);
+        }catch (e){
+            console.error('error');
+        }
+
+    };
+
+    once(type,func) {
+
+        this.fire(type, func)?
+            this.remove(type, func):null;
+
+    }
+}
+引用自：https://www.jianshu.com/p/10a20df72bf2
+```
+
+### Http
+#### 报文结构
+- 请求报文
+    - 请求行（请求方式，URL，http版本）
+    - 请求头（各种属性，cookie，accept，if-modified-since）
+    - 换行
+    - 请求数据
+- 响应报文
+    - 响应行（http版本，状态码+描述）
+    - 响应头
+    - 响应体
+
+#### 常见的请求头和响应头
+- 请求头
+    - Accept： 浏览器可接受的MIME类型。
+    - Authorization：授权信息，通常出现在对服务器发送的WWW-Authenticate头的应答中。
+    - If-Modified-Since：客户机通过这个头告诉服务器，资源的缓存时间。只有当所请求的内容在指定的时间后又经过修改才返回它，否则返回304“Not Modified”应答。
+    - Referer：客户机通过这个头告诉服务器，它是从哪个资源来访问服务器的(防盗链)。
+    - User-Agent：User-Agent头域的内容包含发出请求的用户信息。
+    - Cookie：客户机通过这个头可以向服务器带数据，这是最重要的请求头信息之一。
+    - Host
+    - Connection:Keep-Alive
+    - Cache-Control
+    - Content-Type (application/x-www-form-urlencoded/text/xml)
+- 响应头
+    - Allow：服务器支持哪些请求方法(如GET、POST等)
+    - Allow：服务器支持哪些请求方法(如GET、POST等)
+    - Access-Control-Allow-Origin
+    - Cache-Control
+    - ETag
+    - Expires
+    - Last-Modified
+    - Server
+    - Set-Cookie
+
+#### 缓存
+- 强缓存
+    - expires (http 1.0)<br/>
+    标准格林威治(GMT)时间，如果发送请求的时间在expires之前，那么本地缓存始终有效，否则就会发送请求到服务器来获取资源。<br>
+    expires 的一个缺点就是，返回的到期时间是服务器端的时间，这样存在一个问题，如果客户端的时间与服务器的时间相差很大，那么误差就很大。
+    - Cache-Control （http1.1）<br>
+    主要是利用该字段的max-age值来进行判断，它是一个相对值；资源第一次的请求时间和Cache-Control设定的有效期，计算出一个资源过期时间，再拿这个过期时间跟当前的请求时间比较，如果请求时间在过期时间之前，就能命中缓存，否则就不行
+        - no-cache：不使用本地缓存。需要使用缓存协商，先与服务器确认返回的响应是否被更改，如果之前的响应中存在ETag，那么请求的时候会与服务端验证，如果资源未被更改，则可以避免重新下载。
+        - no-store：直接禁止游览器缓存数据，每次用户请求该资源，都会向服务器发送一个请求，每次都会下载完整的资源。
+        - public：可以被所有的用户缓存，包括终端用户和CDN等中间代理服务器。
+        - private：只能被终端用户的浏览器缓存，不允许CDN等中继缓存服务器对其缓存。
+    - <b>Tip:Cache-Control > expires</b>
+    - 命中返回200（from cache）
+- 协商缓存
+    - Last-Modified/If-Modified-Since<br>
+     二者的值都是GMT格式的时间字符串
+    - Etag/If-None-Match<br>
+    这两个值是由服务器生成的每个资源的唯一标识字符串，只要资源有变化就这个值就会改变
+    - 命中返回304（not modified）
+
+#### http1.0 http1.1 http2.0
+- 1.0和1.1
+    - 1.0需要keep-alive参数来告知服务器端要建立一个长连接，而HTTP1.1默认支持长连接
+    - 1.1中新增了24个错误状态响应码
+    - 1.0没有Host
+    - 1.1支持只发送header信息(不带任何body信息),节约带宽
+    - 1.1增加了缓存处理方式 ETag
+- 1.1和2.0
+    - 1.1不支持数据压缩，2.0支持
+    - 2.0使用了多路复用的技术，做到同一个连接并发处理多个请求，而且并发请求的数量比HTTP1.1大了好几个数量级。
+    - 2.0的web server请求数据的时候，服务器会顺便把一些客户端需要的资源一起推送到客户端，免得客户端再次创建连接发送请求到服务器端获取。
+
+#### http与https
+- HTTPS协议需要到CA申请证书，一般免费证书很少，需要交费。
+- HTTP协议运行在TCP之上，所有传输的内容都是明文，HTTPS运行在SSL/TLS之上，SSL/TLS运行在TCP之上，所有传输的内容都经过加密的。
+- HTTP和HTTPS使用的是完全不同的连接方式，用的端口也不一样，前者是80，后者是443。
+- HTTPS可以有效的防止运营商劫持，解决了防劫持的一个大问题。
+
+- Tip CA证书获取过程
+    - 服务器生成公私钥发给CA机构
+    - CA机构生成公私钥，然后用私钥对后端的公钥加密并生成CA证书
+    - CA机构将生成的CA证书返回给服务器
+    - 浏览器内置CA证书和CA的公钥
