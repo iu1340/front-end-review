@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+    // var a = 10;
+
+    // function a() {
+    //     a = 20;
+    //     console.log(a)
+    // }
+    // a() // 返回报错 a is not function
+
+    // [1,2,3].map(parseInt) // 1,NaN,NaN map(parseInt(item,idx)) 1,0 2,1 3,2  0默认是十进制
+
+    // vue2.0 双向绑定的核心
+    let book = {}
+    Object.defineProperty(book, "name", {
+        set: function (value) {
+            if (value !== book['name']) {
+                console.log('price属性被修改了')
+                book['name'] = value
+            }
+        },
+        get: function () {
+            console.log('price属性被读取了')
+            return book['name']
+        }
+    })
+
+    // vue3 双向绑定
+    let student = {
+        name: '1'
+    }
+    let handle = {
+        get: function (target, property) {
+            console.log('属性读取了')
+            return target[property]
+        },
+        set: function (target, property, value) {
+            console.log('属性修改了')
+            let res = Reflect.set(target, property, value);
+            // var watchers = that.deps[key];
+            // watchers.map(item => {
+            //     item.update();
+            // });
+            return res;
+        }
+    }
+    let proxy = new Proxy(student, handle)
+</script>
+
+</html>
